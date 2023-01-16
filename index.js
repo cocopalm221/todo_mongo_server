@@ -59,7 +59,7 @@ app.get("/", (req, res) => {
 });
 //주소가 없는 경우에 강제 url 이동
 app.get("*", (req, res) => {
-  res.send("(❤´艸｀❤) 오타 났나봐용 여기아니");
+  res.sendFile(path.join(__dirname, "./build/index.html"));
 });
 
 // //할일 등록 (router/Post.js 로 옯겨줌)
