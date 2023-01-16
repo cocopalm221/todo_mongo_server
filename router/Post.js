@@ -49,10 +49,9 @@ router.post("/submit", (req, res) => {
     });
 });
 
-//목록 읽어오기
-
+// 목록 읽어오기
 router.post("/list", (req, res) => {
-  console.log("전체목록 호출", req.body);
+  // console.log("전체목록 호출", req.body);
   let sort = {};
   if (req.body.sort === "최신글") {
     sort = { id: -1 };
@@ -63,12 +62,24 @@ router.post("/list", (req, res) => {
   Todo.find({ title: new RegExp(req.body.search), uid: req.body.uid })
     .populate("author")
     .sort(sort)
-    .skip(req.body.skip) //0~4, 5~9 ,10~14
+    .skip(req.body.skip) // 0 ~ 4, 5 ~ 9, 10~14
     .limit(5)
     .exec()
     .then((doc) => {
-      console.log(doc);
-      res.status(200).json({ success: true, initTodo: doc });
+      // console.log(doc);
+      // 총 카운트를 하여서 버튼 출력 여부 결정
+      Todo.count({
+        title: new RegExp(req.body.search),
+        uid: req.body.uid,
+      })
+        .then((number) => {
+          // console.log(number);
+          res.status(200).json({ success: true, initTodo: doc, total: number });
+        })
+        .catch((error) => {
+          console.log(error);
+          res.status(400).json({ success: false });
+        });
     })
     .catch((error) => {
       console.log(error);
